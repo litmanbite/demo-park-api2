@@ -7,10 +7,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class UserService {
 
+//    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final UserRepository userRepository;
 
     @Transactional
@@ -22,5 +25,21 @@ public class UserService {
     public User buscarPorId(Long id) {
         return userRepository.findById(id).orElseThrow(
                 ()-> new RuntimeException("User not found"));
+    }
+
+    @Transactional
+    public User attSenha(Long id, String senha) {
+        User user = buscarPorId(id);
+        user.setPassword(senha);
+        return user;
+    }
+
+    @Transactional
+    public List<User> buscarTudo(){
+        return userRepository.findAll();
+    }
+
+    public boolean verificarSenha(String rawPassword, String encodedPassword) {
+        return rawPassword.equals(encodedPassword);
     }
 }
