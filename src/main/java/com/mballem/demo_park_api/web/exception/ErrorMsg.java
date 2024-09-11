@@ -1,5 +1,6 @@
 package com.mballem.demo_park_api.web.exception;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
@@ -21,7 +22,10 @@ public class ErrorMsg {
     private int statusCode;
     private String method;
     private String message;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Map<String,String> errors;
+
+
 
     public ErrorMsg(HttpStatus status, HttpServletRequest request, String message) {
         this.path = request.getRequestURI();

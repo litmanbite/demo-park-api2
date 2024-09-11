@@ -1,9 +1,12 @@
 package com.mballem.demo_park_api;
 
+import com.mballem.demo_park_api.DBExcep.DBUsername;
+import com.mballem.demo_park_api.DBExcep.EntityNotFoundExcep;
 import com.mballem.demo_park_api.entity.User;
 import com.mballem.demo_park_api.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -18,13 +21,18 @@ public class UserService {
 
     @Transactional
     public User salvar(User user) {
-        return userRepository.save(user);
+        try {
+            return userRepository.save(user);
+        }
+        catch (DataIntegrityViolationException e) {
+            throw new DBUsername(String.format("Username {%s} already exists", user.getUsername()));
+        }
     }
 
     @Transactional
     public User buscarPorId(Long id) {
         return userRepository.findById(id).orElseThrow(
-                ()-> new RuntimeException("User not found"));
+                ()-> new EntityNotFoundExcep(String.format("User of id = %s not found",id)));
     }
 
     @Transactional
